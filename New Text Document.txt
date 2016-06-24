@@ -1,0 +1,274 @@
+bool f1=false,f2=false,f3=false;
+int score=0;
+int health=10;
+spaceship::spaceship()
+{
+
+   Fnum++;
+   fnumf=Fnum;
+}
+
+void spaceship::moveH(bool a)
+{
+    if(dirH==1)
+        a=~a;
+    if(y()<430)
+    {
+    if(a==1){
+    setX(x()-1);
+    }
+    if(a==0)
+    {
+    setX(x()+1);
+    }
+    }
+    else{
+        if(a==1){
+        setX(x()-1);
+        }
+        if(a==0)
+        {
+        setX(x()+1);
+        }
+    }
+    m=(double)(y()-430)/(double)(x()-430);
+    b=y()-m*x();
+}
+
+void spaceship::chdir(bool a)
+{
+
+
+    dirV=a;
+    if(dirH==1 && a==1)
+        dirV=0;
+    if(dirH==1 && a==0)
+        dirV=1;
+    qDebug()<<"base";
+
+}
+
+Nship::Nship(double a,double c)
+{
+    dirH=0;
+    setPixmap(QPixmap(":/image/Starship1.png"));
+    setScale(0.1);
+    setX(a);
+    setY(c);
+
+    m=(double)(y()-430)/(double)(x()-430);
+    b=y()-m*x();
+    mtimer=new QTimer;
+    mtimer->setInterval(100);
+    mtimer->start();
+
+   connect(mtimer,SIGNAL(timeout()),this,SLOT(moveV()));
+
+    qDebug()<<Fnum;
+
+
+}
+void Nship::moveH(bool a)
+{
+    qDebug()<<health;
+    mtimer->stop();
+    if(y()<430)
+    {
+    if(a==1){
+    setX(x()-1);
+    }
+    if(a==0)
+    {
+    setX(x()+1);
+    }
+    }
+    else{
+        if(a==1){
+        setX(x()-1);
+        }
+        if(a==0)
+        {
+        setX(x()+1);
+        }
+    }
+    m=(double)(y()-430)/(double)(x()-430);
+    b=y()-m*x();
+
+
+    if(!collidingItems().empty())
+    {
+
+        QList <QGraphicsItem*>list = collidingItems();
+         if (typeid(*(list[0])) == typeid(curst))
+             score+=10;
+         if (typeid(*(list[0])) == typeid(rockymeteor)){
+             health--;
+             setPixmap(QPixmap(":/image/explosion.png"));
+         }
+         if (typeid(*(list[0])) == typeid(Srockymeteor))
+         {
+             health--;
+             setPixmap(QPixmap(":/image/explosion.png"));
+         }
+         if (typeid(*(list[0])) == typeid(metalmeteor))
+         {
+             health--;
+             setPixmap(QPixmap(":/image/explosion.png"));
+         }
+
+
+       mtimer->stop();
+
+       setZValue(2);
+       if(fnumf==1)
+       {
+           f1=false;
+       }
+       if(fnumf==2)
+       {
+
+           f2=false;
+       }
+       if(fnumf==3)
+       {
+
+           f3=false;
+       }
+       delete this;
+       return;
+    }
+
+
+
+
+        mtimer->start();
+}
+
+
+void Nship::moveV()
+{
+
+    //qDebug()<<"Salam";
+   // qDebug() <<x()<<"  "<<y();
+    if(dirV)
+    {
+    if(x()>450 && y()<450){
+        if(x()>0)
+        {
+               setX(x()-1);
+           double f=m*(x())+b;
+             setY(f);
+        }
+        }
+    else if(x()==450 && y()<450)
+        if(y()<800){
+            setY(y()+1);
+        }
+    else if(x()==450 && y()>450)
+            if(y()>0)
+            {
+            setY(y()-1);
+            }
+    else if(x()<450 && y()<450){
+         if(x()<800){
+             qDebug()<<"shit";
+              setX(x()+1);
+             double f=m*(x())+b;
+             setY(f);
+         }
+         }
+    else if(x()<450 && y()>450){
+         if(x()<800)
+         {
+             qDebug()<<"shit";
+             setX(x()+1);
+             double f=m*(x())+b;
+             setY(f);
+         }
+         }
+       else if(x()>450 && y()>450){
+        if(x()>0){
+
+        setX(x()-1);
+        double f=m*(x())+b;
+        setY(f);
+        }
+        }
+
+}
+
+    else
+    {
+    if(x()>450 && y()<450 && x()<800){
+        setX(x()+1);
+        double f=m*(x())+b;
+        setY(f);}
+    if(x()==450 && y()<450 && y()>0)
+        setY(y()-1);
+     if(x()==450 && y()>450 && y()>800)
+        setY(y()+1);
+     if(x()<450 && y()<450 && x()<0){
+        setX(x()-1);
+        double f=m*(x())+b;
+        setY(f);}
+    if(x()<450 && y()>450 && x()<0){
+        setX(x()-1);
+        double f=m*(x())+b;
+        setY(f);}
+      if(x()>450 && y()>450 && x()<800){
+
+        setX(x()+1);
+        double f=m*(x())+b;
+        setY(f);}
+}
+
+
+    if(!collidingItems().empty())
+    {
+
+       mtimer->stop();
+       QList <QGraphicsItem*>list = collidingItems();
+        if (typeid(*(list[0])) == typeid(curst))
+            score+=10;
+        if (typeid(*(list[0])) == typeid(rockymeteor)){
+            health--;
+            setPixmap(QPixmap(":/image/explosion.png"));
+        }
+        if (typeid(*(list[0])) == typeid(Srockymeteor))
+        {
+            health--;
+            setPixmap(QPixmap(":/image/explosion.png"));
+        }
+        if (typeid(*(list[0])) == typeid(metalmeteor))
+        {
+            health--;
+            setPixmap(QPixmap(":/image/explosion.png"));
+        }
+
+       setZValue(2);
+       if(fnumf==1)
+       {    qDebug()<<"fuck!!";
+           f1=false;
+       }
+       if(fnumf==2)
+       {
+            qDebug()<<"fuck!!fuck!!";
+           f2=false;
+       }
+       if(fnumf==3)
+       {
+           qDebug()<<"fuck!!fuck!!fuck!!";
+           f3=false;
+       }
+       delete this;
+       return;
+    }
+
+
+
+}
+
+void Nship::chdir(bool a)
+{
+    dirV=a;
+}
